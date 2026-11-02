@@ -21,7 +21,6 @@ if ('IntersectionObserver' in window) {
   const panel = document.querySelector('.personal-file');
   if (!panel) return;
   const lines = [...panel.querySelectorAll('.personal-file-line')];
-  const replay = panel.querySelector('.personal-file-replay');
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const records = lines.map(line => line.textContent);
   function renderRecord(target, text) {
@@ -73,8 +72,6 @@ if ('IntersectionObserver' in window) {
       if (entries.some(entry => entry.isIntersecting)) { play(); observer.disconnect(); }
     }, { threshold: 0.2 });
     observer.observe(panel);
-    replay.hidden = false;
   }
-  replay.addEventListener('click', play);
-  motion.addEventListener('change', () => { showAll(); replay.hidden = motion.matches; });
+  motion.addEventListener('change', showAll);
 })();
