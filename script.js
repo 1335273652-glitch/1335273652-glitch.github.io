@@ -24,10 +24,18 @@ if ('IntersectionObserver' in window) {
   const replay = panel.querySelector('.personal-file-replay');
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const records = lines.map(line => line.textContent);
+  function renderRecord(target, text) {
+    const separator = text.indexOf('：');
+    const label = document.createElement('span');
+    label.className = 'personal-file-label';
+    label.textContent = separator < 0 ? text : text.slice(0, separator + 1);
+    target.replaceChildren(label);
+    if (separator >= 0) target.append(document.createTextNode(text.slice(separator + 1)));
+  }
   let timer, run = 0;
   function showAll() {
     clearTimeout(timer); run++;
-    lines.forEach((line, i) => { line.textContent = records[i]; line.classList.remove('is-typing'); });
+    lines.forEach((line, i) => { renderRecord(line, records[i]); line.classList.remove('is-typing'); });
   }
   function play() {
     showAll();
@@ -50,7 +58,7 @@ if ('IntersectionObserver' in window) {
       if (current !== run) return;
       const line = lines[row], visual = line.querySelector('.personal-file-typed');
       line.classList.add('is-typing');
-      visual.textContent = Array.from(records[row]).slice(0, ++character).join('');
+      renderRecord(visual, Array.from(records[row]).slice(0, ++character).join(''));
       if (character < Array.from(records[row]).length) timer = setTimeout(tick, 22);
       else {
         line.classList.remove('is-typing');
